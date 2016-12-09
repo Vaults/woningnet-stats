@@ -3,12 +3,31 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script type="text/javascript" src="app.js"></script>
-
+        <style>
+            td{
+                text-align: center;
+            }
+        </style>
     </head>
     <body ng-controller="statsController">
-        Average: {{avg[0] + '-' + avg[1] + '-' + avg[2]}}<br>
-        Total: {{total}}<br>
+        <h4>These statistics are all taken from the last year. The results below are houses taken and the person's respective subscription dates.
+            The houses are in the vicinity of De Uithof, including houses reserved for young adults, excluding senior houses.</h4>
+
+        Mean subscription date: {{avg[0] + '-' + avg[1] + '-' + avg[2]}}<br>
+        Median subscription date: {{median[0] + '-' + median[1] + '-' + median[2]}}<br>
+        Total subscribers: {{total}}<br>
         No date: {{nodate}}<br>
-        Yearly: {{yearly}}
+        <table>
+            <thead>
+                <th>Group</th>
+                <th>Amount</th>
+                <th>Percentage</th>
+            </thead>
+            <tr ng-repeat="(key,value) in yearly">
+                <td>{{key}}-{{+key+5}}</td>
+                <td>{{value.count}}</td>
+                <td>{{value.perc}}</td>
+            </tr>
+        </table>
     </body>
 </html>

@@ -9,11 +9,11 @@ statsApp.controller('statsController', function($scope){
         method:'GET',
         url: 'woningnet.php',
     }).done(function(data){
-
+        var d = (o) => +(new Date(parseInt(o[2]), parseInt(o[1]-1), parseInt(o[0])));
+        var median = (o) => (o.length % 2 == 0)?(o[~~(o.length/2)]+o[~~(o.length/2 - 1)])/2:o[~~(o.length/2)];
         data = JSON.parse(data);
         data = data["Verantwoordingen"];
         $scope.total = data.length;
-        $scope.aY = 0;
         //console.log(data);
         data = data.map(o => {
             //console.log(o);
@@ -26,11 +26,13 @@ statsApp.controller('statsController', function($scope){
             }
             return "REMOVE";
         });
-        data = data.filter(o=>o!="REMOVE")
-        console.log(data);
+
+        data = data.filter(o=>o!="REMOVE").sort(function(a,b){
+            return d(a) - d(b);
+        });
         $scope.nodate = $scope.total - data.length;
         $scope.avg = data.reduce((p,n)=> [p[0] + +n[0], p[1] + +n[1], p[2] + +n[2]], [0,0,0]).map(o => Math.round(o/data.length));
-
+        $scope.median = median(data);
         $scope.yearly = {}
         data.forEach(o => {
             var yGroup = Math.floor(o[2]/5)*5;

@@ -4,13 +4,14 @@
 var statsApp = angular.module('statsApp', []);
 statsApp.controller('statsController', function($scope){
     $scope.hello = 'it\'s me';
-    var page = 1;
+    var simpleDateRegex = /[0-3][0-9]-[01][0-9]-[[0-9]{4}/;
     $.ajax({
         method:'GET',
         url: 'woningnet.php',
     }).done(function(data){
         var d = (o) => +(new Date(parseInt(o[2]), parseInt(o[1]-1), parseInt(o[0])));
         var median = (o) => (o.length % 2 == 0)?(o[~~(o.length/2)]+o[~~(o.length/2 - 1)])/2:o[~~(o.length/2)];
+        var prc = (o) => Math.round(o*1000)/10 + '%';
         data = JSON.parse(data);
         data = data["Verantwoordingen"];
         $scope.total = data.length;
@@ -18,7 +19,7 @@ statsApp.controller('statsController', function($scope){
         data = data.map(o => {
             //console.log(o);
             if(o.Omschrijving != null) {
-                var date = o.Omschrijving.match(/[0-3][0-9]-[01][0-9]-[[0-9]{4}/);
+                var date = o.Omschrijving.match(simpleDateRegex);
                 if (date) {
                     return date[0].split('-');
                 }
@@ -27,7 +28,7 @@ statsApp.controller('statsController', function($scope){
             return "REMOVE";
         });
 
-        data = data.filter(o=>o!="REMOVE").sort(function(a,b){
+        data = data.filter(o=>o!="REMOVE").sort((a,b) => {
             return d(a) - d(b);
         });
         $scope.nodate = $scope.total - data.length;
@@ -43,9 +44,20 @@ statsApp.controller('statsController', function($scope){
             }
         });
         for(key in $scope.yearly){
-            $scope.yearly[key].perc = Math.round(($scope.yearly[key].count / data.length)*1000)/10 + '%';
+            $scope.yearly[key].perc = prc($scope.yearly[key].count / data.length);
         }
-
+        
+        $scope.$watch('cusDate', (n, o) => {
+            if(n) {
+                console.log(n.match(simpleDateRegex));
+                if (n.match(simpleDateRegex)) {
+                    //console.log(data.length, data.filter((a)=>d(a) > d(n.split('-'))).length);
+                    $scope.percentile = prc(1 - data.filter((a)=>d(a) <= d(n.split('-'))).length/data.length);
+                }
+            }else{
+                $scope.percentile = 'N/A';
+            }
+        })
 
 
 

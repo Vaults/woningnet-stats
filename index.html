@@ -24,10 +24,13 @@
                 <th>Percentage</th>
             </thead>
             <tr ng-repeat="(key,value) in yearly">
-                <td>{{key}}-{{+key+5}}</td>
+                <td>{{key}}-{{+key+4}}</td>
                 <td>{{value.count}}</td>
                 <td>{{value.perc}}</td>
             </tr>
         </table>
+        Type your date here to see what the percentile is over the past year.<br>
+        Percentile: {{percentile}}<br>
+        <input type="text" ng-model="cusDate" />
     </body>
 </html>

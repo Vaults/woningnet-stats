@@ -26,11 +26,27 @@ statsApp.controller('statsController', function($scope){
             }
             return "REMOVE";
         });
-        data = data.filter(o=>o!="REMOVE");
-
+        data = data.filter(o=>o!="REMOVE")
         console.log(data);
-        $scope.avg = data.reduce((p,n)=> [p[0] + +n[0], p[1] + +n[1], p[2] + +n[2]], [0,0,0]).map(o => o/data.length);
-        console.log($scope.avg);
+        $scope.nodate = $scope.total - data.length;
+        $scope.avg = data.reduce((p,n)=> [p[0] + +n[0], p[1] + +n[1], p[2] + +n[2]], [0,0,0]).map(o => Math.round(o/data.length));
+
+        $scope.yearly = {}
+        data.forEach(o => {
+            var yGroup = Math.floor(o[2]/5)*5;
+            if(!$scope.yearly[yGroup]){
+                $scope.yearly[yGroup] = {count:1};
+            }else{
+                $scope.yearly[yGroup].count++;
+            }
+        });
+        for(key in $scope.yearly){
+            $scope.yearly[key].perc = Math.round(($scope.yearly[key].count / data.length)*1000)/10 + '%';
+        }
+
+
+
+
         $scope.$apply();
     });
 })

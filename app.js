@@ -22,7 +22,7 @@ statsApp.controller('statsController', function ($scope) {
         $scope.total = data.length;
         //Map all data by dates, only thing we're interested in now.
         data = data.map(o => {
-            const potentialDate = o.Omschrijving;
+            const potentialDate = o.Verantwoording;
             if (potentialDate !== null) {
                 const date = potentialDate.match(simpleDateRegex);
                 if (date) {
